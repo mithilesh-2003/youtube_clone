@@ -1,46 +1,32 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { API_KEY } from '../api/apiClient';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function Home() {
-  const [videos, setVideos] = useState([]);
-
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const res = await axios.get(
-          'https://www.googleapis.com/youtube/v3/search',
-          {
-            params: {
-              key: API_KEY,
-              q: 'computer',
-              part: 'snippet',
-              type: 'video',
-            },
-          }
-        );
-        console.log(res.data.items);
-        setVideos(res.data.items);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchVideos();
-  }, []);
-
+function Home({ videos }) {
+  const navigate = useNavigate();
   return (
-    <div>
-      <p>All Videos</p>
-      <div className="grid grid-cols-3">
-        {videos.length > 0 &&
-          videos.map((video, index) => {
-            return (
-              <div key={index}>
-                <img src={video.snippet.thumbnails.default.url} />
-                <p>{video.snippet.title}</p>
-              </div>
-            );
-          })}
+    <div className="bg-gray-200">
+      <div className="max-w-7xl container mx-auto px-3 py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-2 xl:gap-x-5 gap-y-10">
+          {videos.length > 0 &&
+            videos.map((video, index) => {
+              return (
+                <div
+                  key={index}
+                  onClick={() => navigate(`/videos/${video.id.videoId}`)}
+                  className="cursor-pointer hover:shadow-2xl rounded-3xl"
+                >
+                  <img
+                    src={video.snippet.thumbnails.high.url}
+                    alt="video_thumbnail"
+                    className="aspect-video h-52 w-full rounded-t-3xl"
+                  />
+                  <p className="font-semibold p-2 text-gray-600 hover:text-gray-900">
+                    {video.snippet.title}
+                  </p>
+                </div>
+              );
+            })}
+        </div>
       </div>
     </div>
   );
